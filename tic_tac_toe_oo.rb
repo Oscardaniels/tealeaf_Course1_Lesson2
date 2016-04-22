@@ -162,9 +162,12 @@ class Game
   end
 end
 
-puts "Welcome to Tic-Tac_Toe. \nWhat's your name?"
-name = gets.chomp
+def get_player_name
+  puts "Welcome to Tic-Tac_Toe. \nWhat's your name?"
+  name = gets.chomp
+end
 
+name = get_player_name
 loop do
   game = Game.new(name)
   game.play
