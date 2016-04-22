@@ -44,13 +44,15 @@ end
 
 class Player
   attr_accessor :symbol, :board
+  attr_reader :name
 end
 
 class Human < Player
-  def initialize(board)
+  def initialize(board, name)
     @symbol = "X"
     @board = board
-    puts "Get ready to rumble!"
+    @name = name
+    puts "#{name}, Get ready to rumble!"
     sleep 1
   end
 
@@ -114,11 +116,12 @@ class Game
                   [1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], 
                   [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]
                  ]
-  attr_accessor :board, :human, :computer
+  attr_accessor :board, :human, :computer, :name
   
-  def initialize
+  def initialize(name)
+    @name = name
     @board = Board.new
-    @human = Human.new(board)
+    @human = Human.new(board, name)
     @computer = Computer.new(board)
   end
 
@@ -134,7 +137,6 @@ class Game
   end
 
   def winner?(player_piece)
-    #binding.pry
     game_over = false
     WINNING_ROWS.each do |winning_row|
       if winning_row.all? {|value| board.square[value] == player_piece}
@@ -155,14 +157,16 @@ class Game
   end
 
   def play_again?
-    puts "Would you like to play again? (y/n)"
+    puts "#{name}, would you like to play again? (y/n)"
     return true if gets.chomp.downcase == 'y' 
   end
 end
 
+puts "Welcome to Tic-Tac_Toe. \nWhat's your name?"
+name = gets.chomp
+
 loop do
-  game = Game.new
+  game = Game.new(name)
   game.play
   break unless game.play_again?
 end
-
