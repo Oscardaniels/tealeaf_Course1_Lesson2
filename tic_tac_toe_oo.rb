@@ -134,7 +134,6 @@ class Game
   end
 
   def winner?(player_piece)
-    #binding.pry
     game_over = false
     WINNING_ROWS.each do |winning_row|
       if winning_row.all? {|value| board.square[value] == player_piece}
