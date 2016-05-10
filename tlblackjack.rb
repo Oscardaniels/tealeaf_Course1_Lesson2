@@ -1,3 +1,4 @@
+require "pry"
 class Card
   attr_accessor :suit, :face_value
 
@@ -72,7 +73,7 @@ module Hand
       end
     end
     face_values.select{|val| val == "A"}.count.times do 
-      break if total <= 21
+      break if total <= Game::BLACKJACK_AMOUNT
       total -= 10
     end
     total
@@ -83,11 +84,11 @@ module Hand
   end
 
   def busted?
-    total > 21
+    total > Game::BLACKJACK_AMOUNT
   end
 
   def blackjack?
-    total == 21
+    total == Game::BLACKJACK_AMOUNT
   end
 
   def hit_or_stay
@@ -112,11 +113,18 @@ class Player
   end
 
   def take_turn(deck)
+    return if blackjack?
     loop do
       if hit_or_stay == 'h'
+        puts "You've chosen to hit."
+        sleep 1
         add_card(deck.deal_one)
+        puts "Your card: #{cards.last}"
+        sleep 1
         show_hand
       else 
+        puts "You've chosen to stay."
+        sleep 1
         break
       end
       break if busted? || blackjack?
@@ -129,6 +137,7 @@ class Dealer
   include Hand
   attr_accessor :name, :cards, :hide_hole_card
 
+
   def initialize
     @name = "Dealer"
     @cards = []
@@ -139,7 +148,7 @@ class Dealer
     if hide_hole_card == true
       puts "---- #{name}'s Hand ----"
       puts "=> The ?? of ?????"
-      puts "=> #{cards.first}"
+      puts "=> #{cards.last}"
       puts '=> Total: ??'
       self.hide_hole_card = false
     else
@@ -147,17 +156,27 @@ class Dealer
       cards.each do |card|
         puts "=> #{card}"
       end
-      puts "=> Total: #{total}"
+      puts "=> Total: #{total}" 
     end
   end
 
   def take_turn(deck)
+    puts "Dealer's hole card is #{cards.first}"
+    sleep 1
+    show_hand
+    sleep 2
     loop do
-      if total < 17
+      if total < Game::DEALER_HIT_AMOUNT
+        puts "Dealer hits."
+        sleep 1
         add_card(deck.deal_one)
+        puts "Dealer's card: #{cards.last}"
+        sleep 1
         show_hand
         sleep 2
       else 
+        puts "Dealer stays."
+        sleep 1
         break
       end
       break if busted? || blackjack?
@@ -171,6 +190,9 @@ end
 class Game
   attr_accessor :deck
   attr_reader :player, :dealer
+
+  BLACKJACK_AMOUNT = 21
+  DEALER_HIT_AMOUNT = 17
   
   def initialize(n)
     @deck = Deck.new
@@ -180,8 +202,8 @@ class Game
 
   def initial_deal
     player.add_card(deck.deal_one)
-    player.add_card(deck.deal_one)
     dealer.add_card(deck.deal_one)
+    player.add_card(deck.deal_one)
     dealer.add_card(deck.deal_one)
   end
 
@@ -191,14 +213,19 @@ class Game
     player.show_hand
     dealer.show_hand
     player.take_turn(deck)
-    if !player.busted?
+    if !player.busted? && !player.blackjack?
       dealer.take_turn(deck)
     end
     results
   end
 
-  def results
+  def display_totals
+    sleep 1
     puts "#{player.name}: #{player.total} Dealer: #{dealer.total}"
+  end
+
+  def results
+    display_totals
     case 
     when player.busted? then puts "You busted. Dealer wins."
     when dealer.busted? then puts "Dealer busted! You win."
@@ -216,7 +243,7 @@ end
 
 def get_name
   puts "What is your name?"
-  name = gets.chomp
+  name = gets.chomp.capitalize
 end
 
 name = get_name
