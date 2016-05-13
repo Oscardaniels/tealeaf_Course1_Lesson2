@@ -1,4 +1,3 @@
-require "pry"
 class Card
   attr_accessor :suit, :face_value
 
@@ -130,13 +129,11 @@ class Player
       break if busted? || blackjack?
     end
   end
-
 end
 
 class Dealer
   include Hand
   attr_accessor :name, :cards, :hide_hole_card
-
 
   def initialize
     @name = "Dealer"
@@ -182,10 +179,7 @@ class Dealer
       break if busted? || blackjack?
     end
   end
-
 end
-
-
 
 class Game
   attr_accessor :deck
@@ -219,13 +213,12 @@ class Game
     results
   end
 
-  def display_totals
+  def self.display_totals
     sleep 1
     puts "#{player.name}: #{player.total} Dealer: #{dealer.total}"
   end
 
   def results
-    display_totals
     case 
     when player.busted? then puts "You busted. Dealer wins."
     when dealer.busted? then puts "Dealer busted! You win."
