@@ -213,12 +213,13 @@ class Game
     results
   end
 
-  def self.display_totals
+  def display_totals
     sleep 1
     puts "#{player.name}: #{player.total} Dealer: #{dealer.total}"
   end
 
   def results
+    display_totals
     case 
     when player.busted? then puts "You busted. Dealer wins."
     when dealer.busted? then puts "Dealer busted! You win."
