@@ -210,7 +210,7 @@ class Game
     if !player.busted? && !player.blackjack?
       dealer.take_turn(deck)
     end
-    results
+    results 
   end
 
   def display_totals
